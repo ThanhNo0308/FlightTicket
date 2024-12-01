@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập</title>
+    <!-- Link đến các tệp CSS của Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-uppercase">Đăng Nhập</h2>
+
+    <!-- Form đăng nhập -->
+    <form method="POST" action="{{ url_for('authentication_routes.dang_nhap') }}">
+        <div class="form-group">
+            <label for="ma_nguoi_dung">Mã người dùng:</label>
+            <input type="text" class="form-control" id="ma_nguoi_dung" name="ma_nguoi_dung" required>
+        </div>
+        <div class="form-group">
+            <label for="mat_khau">Mật khẩu:</label>
+            <input type="password" class="form-control" id="mat_khau" name="mat_khau" required>
+        </div>
+
+        <!-- Nút Đăng Nhập -->
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        <!-- Nút Trở Về -->
+        <a href="{{ url_for('authentication_routes.index') }}" class="btn btn-secondary">Trở về trang chủ</a>
+    </form>
+
+
+</div>
+
+<!-- Link đến các tệp JS của Bootstrap (Cần phải đặt ở dưới cùng của trang) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.8/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

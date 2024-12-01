@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aivivu - Đặt vé máy bay online giá rẻ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+    <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="/static/js/index.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container-fluid bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{ url_for('authentication_routes.index') }}">Trang chủ</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </nav>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <div id="main">
+        <div id="chatbox">
+            <div id="chatbox-text">Nhấn vào để chat</div>
+            <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
+                    class="fa-brands fa-facebook-messenger"></i></a>
+        </div>
+        <div id="header" class="flexbox">
+            <!-- Nút mở nav mobile -->
+            <div class="nav-bar">
+                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
+            </div>
+            <!-- Lớp phủ đen khi mở nav mobile -->
+            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+
+            <div class="nav-mobile" id="mobile">
+                <!-- Nút đóng nav mobile -->
+                <div class="nav-close">
+                    <i class="fa-regular fa-circle-xmark" onclick="closeNav(this)"></i>
+                </div>
+                <!-- nav menu trên mobile -->
+                <ul class="nav-list">
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('authentication_routes.trang_khach_hang') }}">Home</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/khuyenmai.html">Khuyến mãi</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/vemaybay.html">Vé máy bay</a></li>
+                </ul>
+            </div>
+
+            <div class="header-logo">
+                <a href="{{ url_for('authentication_routes.trang_khach_hang') }}"><img src="/static/img/logo.png"
+                        alt="Logo"></a>
+            </div>
+
+            <!-- nav menu trên PC -->
+            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
+                <li class=""><a class="active" href="{{ url_for('authentication_routes.trang_khach_hang') }}">Home</a>
+                </li>
+                <li class=""><a href="/templates/khuyenmai.html">Khuyến mãi</a></li>
+                <li class=""><a href="/templates/vemaybay.html">Vé máy bay</a></li>
+                <li class="nav-item"><a href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a></li>
+
+            </ul>
+
+            <div class="header-number" title="Hotline"><a href="">&#128242 1900 6696</a></div>
+            <li class=""><a href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+        </div>
+    </div>
+    <h1 class="mt-5 text-center text-uppercase">Thanh toán thành công</h1>
+    <div class="card mt-3 grid wide">
+        <div class="card-body">
+            <p class="card-text">Mã thanh toán: {{ transaction_no }}</p>
+            <p class="card-text">Mã đặt vé: {{ txn_ref }}</p>
+            <p class="card-text">Số tiền: {{ amount }}</p>
+    
+        </div>
+    </div>
+</body>
+

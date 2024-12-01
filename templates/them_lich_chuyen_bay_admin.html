@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm lịch chuyến bay - Admin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+    <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="/static/js/index.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container mt-5">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+
+    </div>
+    <div id="main" style="height: 10vh;">
+        <div id="chatbox">
+            <div id="chatbox-text">Nhấn vào để chat</div>
+            <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
+                    class="fa-brands fa-facebook-messenger"></i></a>
+        </div>
+        <div id="header" class="flexbox">
+            <!-- Nút mở nav mobile -->
+            <div class="nav-bar">
+                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
+            </div>
+            <!-- Lớp phủ đen khi mở nav mobile -->
+            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+
+            <div class="nav-mobile" id="mobile">
+                <!-- Nút đóng nav mobile -->
+                <div class="nav-close">
+                    <i class="fa-regular fa-circle-xmark" onclick="closeNav(this)"></i>
+                </div>
+                <!-- nav menu trên mobile -->
+                <ul class="nav-list">
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('authentication_routes.trang_admin') }}">Home</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/khuyenmai.html">Khuyến mãi</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/vemaybay.html">Vé máy bay</a></li>
+                </ul>
+            </div>
+
+            <div class="header-logo">
+                <a href="{{ url_for('authentication_routes.trang_admin') }}"><img src="/static/img/logo.png"
+                        alt="Logo"></a>
+            </div>
+
+            <!-- nav menu trên PC -->
+            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
+                <li class=""><a class="nav-mobile-link"
+                        href="{{ url_for('authentication_routes.trang_admin') }}">Home</a></li>
+                <li class=""><a class="nav-mobile-link"
+                        href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
+                <li class=""><a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Thay
+                        đổi quy định</a></li>
+                <li class=""><a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo
+                        cáo</a></li>
+
+            </ul>
+
+            <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+        </div>
+    </div>
+
+    <h2 class="text-center text-uppercase">Thêm Lịch Chuyến Bay</h2>
+    <form method="post"
+        action="{{ url_for('lich_chuyen_bay_routes.them_lich_chuyen_bay', ma_chuyen_bay=ma_chuyen_bay) }}" class="grid wide">
+        <!-- Form nhập thông tin lịch chuyến bay -->
+
+        <div class="form-group">
+            <label for="ngay_gio_khoi_hanh">Ngày Giờ Khởi Hành:</label>
+            <input type="datetime-local" class="form-control" id="ngay_gio_khoi_hanh" name="ngay_gio_khoi_hanh"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="thoi_gian_bay_phut">Thời Gian Bay (phút):</label>
+            <input type="number" class="form-control" id="thoi_gian_bay_phut" name="thoi_gian_bay_phut" required
+                min="{{quy_dinh_info.thoi_gian_bay_phut}}">
+        </div>
+
+        <div class="form-group">
+            <label for="so_ghe_hang_1">Số Ghế Hạng 1:</label>
+            <input type="number" class="form-control" id="so_ghe_hang_1" name="so_ghe_hang_1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="so_ghe_hang_2">Số Ghế Hạng 2:</label>
+            <input type="number" class="form-control" id="so_ghe_hang_2" name="so_ghe_hang_2" required>
+        </div>
+
+        <div id="san_bay_trung_gian_section">
+            <!-- Nơi hiển thị danh sách sân bay trung gian -->
+        </div>
+
+        <!-- Nút để thêm sân bay trung gian -->
+        <button type="button" class="btn btn-secondary" onclick="themSanBayTrungGian()">Thêm Sân Bay Trung Gian</button>
+
+        <button type="submit" class="btn btn-primary">Thêm</button>
+    </form>
+    <!-- Link đến các tệp JS của Bootstrap (Cần phải đặt ở dưới cùng của trang) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.8/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        var sttCount = 1;  // Biến đếm stt
+        var so_san_bay_trung_gian_toi_da = "{{ quy_dinh_info.so_san_bay_trung_gian_toi_da}}";
+        var thoi_gian_dung_toi_thieu = "{{ quy_dinh_info.thoi_gian_dung_toi_thieu}}";
+        var thoi_gian_dung_toi_da = "{{ quy_dinh_info.thoi_gian_dung_toi_da}}";
+
+        function themSanBayTrungGian() {
+            if (sttCount > so_san_bay_trung_gian_toi_da)
+                return;
+            // Tạo một div chứa thông tin sân bay trung gian
+            var divSanBayTrungGian = document.createElement("div");
+            divSanBayTrungGian.className = "san-bay-trung-gian";
+
+            // Thêm các trường nhập liệu cho sân bay trung gian
+            divSanBayTrungGian.innerHTML = `
+            <div class="form-group">
+                <label for="stt">STT:</label>
+                <input type="text" class="form-control" name="stt[]" value="${sttCount}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="san_bay_trung_gian">Sân Bay Trung Gian:</label>
+                <select class="form-control" name="san_bay_trung_gian[]" required>
+                    {% for san_bay in danh_sach_san_bay %}
+                        <option value="{{ san_bay.ma_san_bay }}">{{ san_bay.ten_san_bay }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="thoi_gian_dung_phut">Thời Gian Dừng (phút):</label>
+                <input type="number" class="form-control" name="thoi_gian_dung_phut[]" required max="${thoi_gian_dung_toi_da}" min="${thoi_gian_dung_toi_thieu}">
+            </div>
+            <div class="form-group">
+                <label for="ghi_chu">Ghi Chú:</label>
+                <input type="text" class="form-control" name="ghi_chu[]">
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-danger" onclick="xoaSanBayTrungGian(this)">Xóa</button>
+            </div>
+            <hr>
+        `;
+
+            // Tăng số stt cho lần thêm mới
+            sttCount++;
+
+            // Thêm div vào phần tử chứa sân bay trung gian
+            document.getElementById("san_bay_trung_gian_section").appendChild(divSanBayTrungGian);
+        }
+        function xoaSanBayTrungGian(button) {
+            // Xóa div chứa thông tin sân bay trung gian khi người dùng click nút "Xóa"
+            var divSanBayTrungGian = button.closest(".san-bay-trung-gian");
+            divSanBayTrungGian.remove();
+
+            // Cập nhật lại giá trị "STT" của các input
+            var sttInputs = document.getElementsByName("stt[]");
+            for (var i = 0; i < sttInputs.length; i++) {
+                sttInputs[i].value = i + 1;
+            }
+
+            // Giảm số stt cho lần xóa mới
+            sttCount--;
+        }
+    </script>
+
+
+
+
+</body>
+
+</html>

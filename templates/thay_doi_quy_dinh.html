@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thay đổi quy định - Admin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+    <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="/static/js/index.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+    </div>
+    <div id="main" style="height: 10vh;">
+        <div id="chatbox">
+            <div id="chatbox-text">Nhấn vào để chat</div>
+            <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
+                    class="fa-brands fa-facebook-messenger"></i></a>
+        </div>
+        <div id="header" class="flexbox">
+            <!-- Nút mở nav mobile -->
+            <div class="nav-bar">
+                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
+            </div>
+            <!-- Lớp phủ đen khi mở nav mobile -->
+            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+
+            <div class="nav-mobile" id="mobile">
+                <!-- Nút đóng nav mobile -->
+                <div class="nav-close">
+                    <i class="fa-regular fa-circle-xmark" onclick="closeNav(this)"></i>
+                </div>
+                <!-- nav menu trên mobile -->
+                <ul class="nav-list">
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('authentication_routes.trang_khach_hang') }}">Home</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/khuyenmai.html">Khuyến mãi</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/vemaybay.html">Vé máy bay</a></li>
+                </ul>
+            </div>
+
+            <div class="header-logo">
+                <a href="{{ url_for('authentication_routes.trang_admin') }}"><img src="/static/img/logo.png"
+                        alt="Logo"></a>
+            </div>
+
+            <!-- nav menu trên PC -->
+            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
+                <li class=""><a class="nav-mobile-link"
+                        href="{{ url_for('authentication_routes.trang_admin') }}">Home</a></li>
+                <li class=""><a class="nav-mobile-link"
+                        href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
+                <li class=""><a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Thay
+                        đổi quy định</a></li>
+                <li class=""><a class="nav-mobile-link"
+                        href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a></li>
+
+            </ul>
+
+            <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+        </div>
+    </div>
+    <h2 class="mb-4" style="text-align: center;">Thay Đổi Quy Định</h2>
+
+
+    <form method="POST" action="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}" class="grid wide">
+        <div class="form-group">
+            <label for="so_luong_san_bay">Số Lượng Sân Bay:</label>
+            <input type="number" class="form-control" id="so_luong_san_bay" name="so_luong_san_bay"
+                value="{{ quy_dinh[1] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="thoi_gian_bay_toi_thieu">Thời Gian Bay Tối Thiểu (phút):</label>
+            <input type="number" class="form-control" id="thoi_gian_bay_toi_thieu" name="thoi_gian_bay_toi_thieu"
+                value="{{ quy_dinh[2] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="so_san_bay_trung_gian_toi_da">Số Sân Bay Trung Gian Tối Đa:</label>
+            <input type="number" class="form-control" id="so_san_bay_trung_gian_toi_da"
+                name="so_san_bay_trung_gian_toi_da" value="{{ quy_dinh[3] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="thoi_gian_dung_toi_thieu">Thời Gian Dừng Tối Thiểu (phút):</label>
+            <input type="number" class="form-control" id="thoi_gian_dung_toi_thieu" name="thoi_gian_dung_toi_thieu"
+                value="{{ quy_dinh[4] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="thoi_gian_dung_toi_da">Thời Gian Dừng Tối Đa (phút):</label>
+            <input type="number" class="form-control" id="thoi_gian_dung_toi_da" name="thoi_gian_dung_toi_da"
+                value="{{ quy_dinh[5] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="so_gio_dat_ve_truoc">Số Giờ Đặt Vé Trước:</label>
+            <input type="number" class="form-control" id="so_gio_dat_ve_truoc" name="so_gio_dat_ve_truoc"
+                value="{{ quy_dinh[6] }}" required>
+        </div>
+        <div class="form-group">
+            <label for="so_gio_ban_ve_truoc">Số Giờ Bán Vé Trước:</label>
+            <input type="number" class="form-control" id="so_gio_ban_ve_truoc" name="so_gio_ban_ve_truoc"
+                value="{{ quy_dinh[7] }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+    </form>
+
+
+</body>

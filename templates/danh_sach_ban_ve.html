@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bán vé chuyến bay - Staff</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+    <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="/static/js/index.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+    <div id="main" style="height: 10vh;">
+        <div id="chatbox">
+            <div id="chatbox-text">Nhấn vào để chat</div>
+            <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
+                    class="fa-brands fa-facebook-messenger"></i></a>
+        </div>
+        <div id="header" class="flexbox">
+            <!-- Nút mở nav mobile -->
+            <div class="nav-bar">
+                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
+            </div>
+            <!-- Lớp phủ đen khi mở nav mobile -->
+            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+
+            <div class="nav-mobile" id="mobile">
+                <!-- Nút đóng nav mobile -->
+                <div class="nav-close">
+                    <i class="fa-regular fa-circle-xmark" onclick="closeNav(this)"></i>
+                </div>
+                <!-- nav menu trên mobile -->
+                <ul class="nav-list">
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('authentication_routes.trang_khach_hang') }}">Home</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/khuyenmai.html">Khuyến mãi</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/vemaybay.html">Vé máy bay</a></li>
+                </ul>
+            </div>
+
+            <div class="header-logo">
+                <a href="{{ url_for('authentication_routes.trang_nhan_vien') }}"><img src="/static/img/logo.png"
+                        alt="Logo"></a>
+            </div>
+
+            <!-- nav menu trên PC -->
+            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
+                <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Home</a></li>
+                <li class=""><a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a></li>
+                <li class=""> <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a></li>
+
+            </ul>
+
+            <li class=""><a href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+        </div>
+    </div>
+
+    <h1 class="text-center text-uppercase mt-5">Danh sách chuyến bay</h1>
+    <!-- Form tìm kiếm -->
+    <form method="get" action="/danh_sach_ban_ve" class="grid wide">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="san_bay_di">Sân bay đi:</label>
+                    <select class="form-control" id="san_bay_di" name="san_bay_di">
+                        {% for san_bay in danh_sach_san_bay_di %}
+                        <option value="{{ san_bay[0] }}" {% if san_bay[0]==san_bay_di_selected %}selected{% endif %}>{{
+                            san_bay[0] + " - " + san_bay[1]}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="san_bay_den">Sân bay đến:</label>
+                    <select class="form-control" id="san_bay_den" name="san_bay_den">
+                        {% for san_bay in danh_sach_san_bay_den %}
+                        <option value="{{ san_bay[0] }}" {% if san_bay[0]==san_bay_den_selected %}selected{% endif %}>{{
+                            san_bay[0] + " - " + san_bay[1] }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="ngay_khoi_hanh">Ngày khởi hành:</label>
+                    <input type="date" class="form-control" id="ngay_khoi_hanh" name="ngay_khoi_hanh"
+                        value="{{ ngay_khoi_hanh }}" required>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label></label>
+                    <button type="submit" class="btn btn-primary btn-block">Tìm kiếm</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-info" role="alert">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <!-- Bảng hiển thị danh sách chuyến bay -->
+    <table class="table mt-3 mx-auto" style="width: 80%; text-align: center;">
+        <thead>
+            <tr>
+                <th>Chuyến bay</th>
+                <th>Sân bay đi</th>
+                <th>Sân bay đến</th>
+                <th>Ngày khởi hành</th>
+                <th>Hạng vé</th>
+                <th>Giá</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+
+            {% for chuyen_bay in chuyen_bay_list %}
+            <tr>
+                <td>{{ chuyen_bay[0] }}</td>
+                <td>{{ chuyen_bay[1] }}</td>
+                <td>{{ chuyen_bay[2] }}</td>
+                <td>{{ chuyen_bay[3] }}</td>
+                <td>{{ chuyen_bay[6] }}</td>
+                <td>{{ chuyen_bay[4] }}</td>
+                <td>
+                    <a href="{{ url_for('ban_ve_routes.ban_ve', ma_ve=chuyen_bay[5], ma_lich_chuyen_bay=chuyen_bay[7])}}"
+                        class="btn btn-primary">Bán vé</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+</body>
+
+</html>

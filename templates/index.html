@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chuyển hướng</title>
+    <!-- Link đến các tệp CSS của Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-uppercase">Chuyển hướng đến</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Khách hàng</h5>
+                    <p class="card-text">Chuyển hướng đến trang khách hàng.</p>
+                    <a href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}" class="btn btn-primary">Chuyển hướng</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Người dùng</h5>
+                    <p class="card-text">Chuyển hướng đến trang người dùng.</p>
+                    <a href="{{ url_for('authentication_routes.dang_nhap') }}" class="btn btn-primary">Chuyển hướng</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Link đến các tệp JS của Bootstrap (Cần phải đặt ở dưới cùng của trang) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

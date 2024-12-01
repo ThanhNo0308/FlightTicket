@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo - Admin</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+    <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="/static/js/index.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <div id="main" style="height: 10vh;">
+        <div id="chatbox">
+            <div id="chatbox-text">Nhấn vào để chat</div>
+            <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
+                    class="fa-brands fa-facebook-messenger"></i></a>
+        </div>
+        <div id="header" class="flexbox">
+            <!-- Nút mở nav mobile -->
+            <div class="nav-bar">
+                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
+            </div>
+            <!-- Lớp phủ đen khi mở nav mobile -->
+            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+
+            <div class="nav-mobile" id="mobile">
+                <!-- Nút đóng nav mobile -->
+                <div class="nav-close">
+                    <i class="fa-regular fa-circle-xmark" onclick="closeNav(this)"></i>
+                </div>
+                <!-- nav menu trên mobile -->
+                <ul class="nav-list">
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('authentication_routes.trang_khach_hang') }}">Home</a></li>
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản lý chuyến bay</a></li>
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Thay đổi quy định</a></li>
+                </ul>
+            </div>
+
+            <div class="header-logo">
+                <a href="{{ url_for('authentication_routes.trang_admin') }}"><img src="/static/img/logo.png"
+                        alt="Logo"></a>
+            </div>
+
+            <!-- nav menu trên PC -->
+            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
+                <li class=""><a class="nav-mobile-link"
+                        href="{{ url_for('authentication_routes.trang_admin') }}">Home</a></li>
+                <li class=""><a class="nav-mobile-link"
+                        href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay_admin') }}">Quản lý chuyến bay</a></li>
+                <li class=""><a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Thay
+                        đổi quy định</a></li>
+                <li class=""><a class="nav-mobile-link" href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo
+                        cáo</a></li>
+
+            </ul>
+
+            <li class=""><a href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+        </div>
+    </div>
+
+    <h2 class="text-center mb-4">Báo Cáo Doanh Thu Theo Tháng</h2>
+
+    <form id="monthForm" class="grid wide">
+        <div class="form-group">
+            <label for="selectedMonth">Chọn tháng:</label>
+            <input type="month" id="selectedMonth" name="selectedMonth" class="form-control" required>
+        </div>
+        <button type="button" onclick="getChartData()" class="btn btn-primary">Xem Báo Cáo</button>
+        <button type="button" onclick="exportReport()" class="btn btn-success ml-2">Xuất Báo Cáo</button>
+    </form>
+
+    <div class="mt-4 report grid wide">
+        <canvas id="revenueChart"></canvas>
+        <canvas id="hiddenChart" style="display: none; max-width: 500px;"></canvas>
+    </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function getChartData() {
+            var selectedMonth = document.getElementById('selectedMonth').value;
+            var formData = new FormData();
+            formData.append('selected_month', selectedMonth);
+
+            fetch('/doanh_thu_theo_thang', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    renderChart(data);
+                });
+        }
+
+        function renderChart(data) {
+            var canvas = document.getElementById('revenueChart');
+            var ctx = canvas.getContext('2d');
+
+            // Clear the existing chart
+            Chart.helpers.each(Chart.instances, function (instance) {
+                instance.destroy();
+            });
+
+            // Create a new chart
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Doanh Thu',
+                        data: data.data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Draw the chart on the hidden canvas
+            var hiddenCanvas = document.getElementById('hiddenChart');
+            var hiddenCtx = hiddenCanvas.getContext('2d');
+            var chart = new Chart(hiddenCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Doanh Thu',
+                        data: data.data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportReport() {
+            var selectedMonth = document.getElementById('selectedMonth').value;
+            var canvas = document.getElementById('hiddenChart');
+            var chart = Chart.getChart(canvas);
+
+            // Get the base64-encoded image data
+            var chartImage = chart.toBase64Image();
+
+            // Create an image element to hold the chart image
+            var chartImageElement = document.createElement('img');
+            chartImageElement.src = chartImage;
+
+            // Create a container for the exported content
+            var exportContainer = document.createElement('div');
+
+            var titleElement = document.createElement('h2');
+            titleElement.textContent = 'Báo Cáo Doanh Thu Theo Tháng';
+            exportContainer.appendChild(titleElement);
+
+            var monthElement = document.createElement('p');
+            monthElement.textContent = 'Tháng: ' + selectedMonth;
+            exportContainer.appendChild(monthElement);
+
+            // Append the chart image element to the container
+            exportContainer.appendChild(chartImageElement);
+
+            var pdfOptions = {
+                margin: 10,
+                filename: 'BaoCao.pdf',
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            };
+
+            // Use html2pdf to export the container with the chart image
+            html2pdf(exportContainer, pdfOptions);
+        }
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bán vé chuyến bay</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+</head>
+<body>
+<div class="container-fluid bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('authentication_routes.index') }}">Trang chủ</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+
+                {% if quyen and quyen == 'Nhân viên' %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a>
+                </li>
+                {% endif %}
+
+                {% if quyen == 'Khách hàng'%}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('dat_ve_routes.danh_sach_dat_ve') }}">Đặt vé</a>
+                </li>
+                {% endif %}
+                {% if quyen != "Khách hàng" %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến
+                        Bay</a>
+                </li>
+                {% endif %}
+                {% if quyen and quyen == 'Người quản trị' %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('quy_dinh_routes.thay_doi_quy_dinh') }}">Thay đổi quy định</a>
+                </li>
+                {% endif %}
+                {% if quyen and quyen == 'Người quản trị' %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('quy_dinh_routes.doanh_thu_theo_thang') }}">Báo cáo</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</div>
+<div class="container mt-5">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-info">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% block content %}
+    {% endblock %}
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

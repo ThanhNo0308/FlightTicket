@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aivivu - Đặt vé máy bay online giá rẻ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="shortcut icon" href="/static/img/logo-icon.png">
+    <link rel="stylesheet" href="/static/css/fontawesome-free-6.4.0-web/css/all.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="/static/js/index.js" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container-fluid bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{ url_for('authentication_routes.index') }}">Trang chủ</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </nav>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info">
+            {{ messages[0] }}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <div id="main">
+        <div id="chatbox">
+            <div id="chatbox-text">Nhấn vào để chat</div>
+            <a class="chatbox-a" href="https://www.facebook.com/AivivuHoChiMinh" target="_blank"><i
+                    class="fa-brands fa-facebook-messenger"></i></a>
+        </div>
+        <div id="header" class="flexbox">
+            <!-- Nút mở nav mobile -->
+            <div class="nav-bar">
+                <i class="fa-solid fa-bars" onclick="navMobile(this)"></i>
+            </div>
+            <!-- Lớp phủ đen khi mở nav mobile -->
+            <div class="nav-overlay" id="overlay" onclick="closeNav(this)"></div>
+
+            <div class="nav-mobile" id="mobile">
+                <!-- Nút đóng nav mobile -->
+                <div class="nav-close">
+                    <i class="fa-regular fa-circle-xmark" onclick="closeNav(this)"></i>
+                </div>
+                <!-- nav menu trên mobile -->
+                <ul class="nav-list">
+                    <li class=""><a class="nav-mobile-link"
+                            href="{{ url_for('authentication_routes.trang_khach_hang') }}">Home</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/khuyenmai.html">Khuyến mãi</a></li>
+                    <li class=""><a class="nav-mobile-link" href="/templates/vemaybay.html">Vé máy bay</a></li>
+                </ul>
+            </div>
+
+            <div class="header-logo">
+                <a href="{{ url_for('authentication_routes.trang_khach_hang') }}"><img src="/static/img/logo.png"
+                        alt="Logo"></a>
+            </div>
+
+            <!-- nav menu trên PC -->
+            <ul class="nav flexbox"> <!-- class flexbox dùng để đặt nhanh vào những vị trí cần flex -->
+                <li class=""><a class="nav-link" href="{{ url_for('authentication_routes.trang_nhan_vien') }}">Home</a></li>
+                <li class=""><a class="nav-link" href="{{ url_for('ban_ve_routes.danh_sach_ban_ve') }}">Bán vé</a></li>
+                <li class=""> <a class="nav-link" href="{{ url_for('chuyen_bay_routes.danh_sach_chuyen_bay') }}">Quản Lý Chuyến Bay</a></li>
+
+
+            </ul>
+
+            <li class=""><a href="{{ url_for('authentication_routes.index') }}">Đăng xuất</a></li>
+        </div>
+    </div>
+    <form action="" class="grid wide mt-5">
+        <h1 class="mb-4">Thông tin bán vé</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Mã đặt vé:</strong> {{ thong_tin_dat_ve.ma_ve }}</p>
+                <p><strong>Họ tên:</strong> {{ thong_tin_dat_ve.ho_ten }}</p>
+                <p><strong>CMND/CCCD:</strong> {{ thong_tin_dat_ve.cmnd_cccd }}</p>
+                <p><strong>Số điện thoại:</strong> {{ thong_tin_dat_ve.so_dien_thoai }}</p>
+            </div>
+        </div>
+
+        <h2 class="mt-4">Thông tin vé chuyến bay</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Mã chuyến bay:</strong> {{ thong_tin_ve_chuyen_bay.ma_chuyen_bay }}</p>
+                <p><strong>Chuyến bay:</strong> Từ {{ thong_tin_chuyen_bay.san_bay_di }} đến {{
+                    thong_tin_chuyen_bay.san_bay_den }}</p>
+                <p><strong>Ngày giờ khởi hành:</strong> {{ thong_tin_chuyen_bay.ngay_gio_khoi_hanh }}</p>
+                <p><strong>Hạng vé:</strong> {{ thong_tin_ve_chuyen_bay.hang_ve }}</p>
+                <p><strong>Giá vé:</strong> {{ thong_tin_ve_chuyen_bay.gia }}</p>
+
+            </div>
+        </div>
+
+        <!-- Add a button to trigger PDF export -->
+        <div class="mt-4">
+            <button class="btn btn-primary" onclick="exportToPDF()">Xuất PDF</button>
+        </div>
+    </form>
+
+    <!-- Include the jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <!-- Add PDF export code to the script -->
+    <script>
+        function exportToPDF() {
+            // Get booked ticket information
+            var ma_dat_ve = '{{ thong_tin_dat_ve.ma_ve }}';
+            var ho_ten = '{{ thong_tin_dat_ve.ho_ten }}';
+            var cmnd_cccd = '{{ thong_tin_dat_ve.cmnd_cccd }}';
+            var so_dien_thoai = '{{ thong_tin_dat_ve.so_dien_thoai }}';
+
+            // Get ticket information
+            var ma_chuyen_bay = '{{ thong_tin_ve_chuyen_bay.ma_chuyen_bay }}';
+            var chuyen_bay = '{{ thong_tin_chuyen_bay.san_bay_di }} đến {{ thong_tin_chuyen_bay.san_bay_den }}';
+            var ngay_khoi_hanh = '{{ thong_tin_chuyen_bay.ngay_gio_khoi_hanh }}';
+            var hang_ve = '{{ thong_tin_ve_chuyen_bay.hang_ve }}';
+            var gia_ve = '{{ thong_tin_ve_chuyen_bay.gia }}';
+
+            // Create HTML content for the PDF
+            var htmlContent = `
+            <div class="container m-5">
+                <h2>Thông tin bán vé</h2>
+                <p>Mã đặt vé: ${ma_dat_ve}</p>
+                <p>Họ tên: ${ho_ten}</p>
+                <p>CMND/CCCD: ${cmnd_cccd}</p>
+                <p>Số điện thoại: ${so_dien_thoai}</p>
+
+                <h2>Thông tin vé chuyến bay</h2>
+                <p>Mã chuyến bay: ${ma_chuyen_bay}</p>
+                <p>Chuyến bay: Từ ${chuyen_bay}</p>
+                <p>Ngày giờ khởi hành: ${ngay_khoi_hanh}</p>
+                <p>Hạng vé: ${hang_ve}</p>
+                <p>Giá vé: ${gia_ve}</p>
+            </div>
+        `;
+
+            // Create PDF using html2pdf
+            html2pdf().from(htmlContent).save('booked_ticket_information.pdf');
+        }
+    </script>
+
+</body>
+
+</html>
+<!-- Display booked ticket information -->
